@@ -7,12 +7,11 @@ library(discogger);library(tidyverse)
 library(expss);library(tidyverse)
 source("Z:GENERAL/R/BensConvenienceFunctions.r")
 
-mytoken<-'DCRXqSkGPPJOGcAEuVaHIeytFjauwvbZWyGsJCZB'
 
 # read data ---------------------------------------------------------------
 
 
-# current token = DCRXqSkGPPJOGcAEuVaHIeytFjauwvbZWyGsJCZB
+# current token = secret
 discogger::discogs_api_token()
 
 discogs_search(params=list(artist="Art Blakey"),n_results = 10)
