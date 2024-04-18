@@ -7,6 +7,7 @@ library(discogger);library(tidyverse)
 library(expss);library(tidyverse)
 source("Z:GENERAL/R/BensConvenienceFunctions.r")
 
+mytoken<-'DCRXqSkGPPJOGcAEuVaHIeytFjauwvbZWyGsJCZB'
 
 # read data ---------------------------------------------------------------
 
@@ -29,6 +30,14 @@ dc2<-dc %>% dplyr::filter(!is.na(id) ) %>%  # big change over previous ver.
   summarise(  release_code=first(id),    artist=first(artist),
     year=first(year), role=first(role),type=first(type),    label=first(label)) %>%
   dplyr::filter(role=="Main")
+
+# simple timeline for one artist
+artist<-unique(word(dc2$artist,1,2))
+ggplot(dc2, aes(year,2,label=str_wrap(title,25))) +
+  geom_point()+
+  ggrepel::geom_text_repel(angle=33, nudge_y = .4,size=3)+
+  ylim(0,3)+
+  labs(title=paste0("Releases by ",artist))
 
 
               # single album
