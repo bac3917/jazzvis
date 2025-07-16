@@ -102,9 +102,9 @@ write.csv(df,paste0('K:/bac/R/jazzDbase/jazzalbums_ornetteColeman',Sys.Date(),'.
 
 # open allRels ------------------------------------------------------------
 list.files(path='K:/bac/R/jazzDbase/', pattern = "rels_")
-jClean<-read.csv("K:/bac/R/jazzDbase/rels_DexterGordon.csv")
-jClean<-read.csv("K:/bac/R/jazzDbase/rels_StuWilliamson.csv")
-myartist<-"Stu Williamson"
+allrels<-read.csv("K:/bac/R/jazzDbase/rels_Chubbytest.csv")
+allrels<-read.csv("K:/bac/R/jazzDbase/rels_StuWilliamson.csv")
+myartist<-"ChubbyJackson"
 
 # merge 'type' using releaseID
 # open saved file and begin prep for network analysis
@@ -112,40 +112,8 @@ myartist<-"Stu Williamson"
 #jClean<-read.csv("K:/bac/R/jazzDbase/jazzalbums_bgreen2020-12-04.csv",skip = 0)
 #jClean<-read.csv("K:/bac/R/jazzDbase/jazzalbums_McCoy Tyner82.csv",skip = 2)
 #jClean<-read.csv("K:/bac/R/jazzDbase/jazzalbums_Miles Davis5.csv",skip = 2)
-jClean$X<-NULL
 
-# some data are stuck in column headers!
-colnames(jClean)[1:8]<-c("release_code", "title","year","leadArtist","albumid","extraArtists","role","extraArtistID")
-jClean$n<-NULL
 
-allrels<-jClean 
-
-# data cleaning
-allrels$role<-ifelse( str_detect(allrels$role, "Saxo"),"Saxophone",
-  ifelse( str_detect(allrels$role,"Engineer"),"Engineer",
-  ifelse( str_detect(allrels$role,"Guitar"),"Guitar",
-  ifelse( str_detect(allrels$role,"Drums"),"Drums",
-  ifelse( str_detect(allrels$role,"Produ"),"Producer",
-  ifelse( str_detect(allrels$role,"Photo"),"Photography",
-  ifelse( str_detect(allrels$role,"Trump"),"Trumpet",
-  ifelse( str_detect(allrels$role,"Piano"),"Piano",
-  allrels$role))))))))
-
-# there is an issue with the extraartist role being something other 
-# than an instrument so  keep band members only
-instruments<-paste(c("Piano","Drums","Sax","Bass","Guitar","Bass","Cello","Cornet","Trumpet",
-                    "Keyboards", "Marimba","Strings", "Orchestra",  "Vibra","Vocals","Featuring"),collapse = "|")
-allrels$band<-ifelse(str_detect(allrels$role, instruments), 1,0) # flag row if member of band
-
-allrels<-allrels[allrels$band==1, ]   # NOTE: this might not validly include all musicians
-
-# the extraArtists column appears to have most accurate instrument data
-allrels %>% group_by(extraArtists) %>% summarise(instrument=first(role)) %>% htmlTable()
-
-allrels$role<-factor(allrels$role)
-
-# found that grouping on albumid too restrictive and that grouping on album name less so
-allrels$title<-ifelse(allrels$title=="NA",NA,allrels$title)
 # remove cases with only one albumid  & if title is missing
 allrels<-allrels %>% dplyr::group_by(title) %>% mutate(nalb=n())
 
